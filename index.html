@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="De Olho no Bueiro – Plataforma de monitoramento inteligente de bueiros em Porto Velho/RO para prevenção de alagamentos urbanos." />
+  <meta name="keywords" content="bueiros, Porto Velho, monitoramento, alagamento, smart city, IoT" />
+  <title>De Olho no Bueiro | Monitoramento Inteligente de Bueiros</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <header class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#home" class="nav-logo" onclick="showPage('home')">
+        <img src="logo.png" alt="De Olho no Bueiro" class="logo-img" />
+      </a>
+      <nav class="nav-links" id="navLinks">
+        <a href="#home"    class="nav-link active" data-page="home"    onclick="showPage('home')">Início</a>
+        <a href="#mapa"    class="nav-link"         data-page="mapa"    onclick="showPage('mapa')">Mapa de Bueiros</a>
+        <a href="#sobre"   class="nav-link"         data-page="sobre"   onclick="showPage('sobre')">Sobre Nós</a>
+      </nav>
+      <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== PAGE: HOME ===== -->
+  <main id="page-home" class="page active">
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+      <div class="hero-bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+      </div>
+      <div class="hero-content">
+        <div class="hero-badge">🌿 Tecnologia a favor da cidade</div>
+        <h1 class="hero-title">Monitore. Previna.<br/><span class="hero-highlight">Proteja Porto Velho.</span></h1>
+        <p class="hero-subtitle">
+          Acompanhe em tempo real o nível dos bueiros da cidade e ajude a evitar alagamentos
+          antes que eles aconteçam.
+        </p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" onclick="showPage('mapa')">Ver Mapa de Bueiros</button>
+          <button class="btn btn-outline" onclick="document.getElementById('como-funciona').scrollIntoView({behavior:'smooth'})">Saiba Mais</button>
+        </div>
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">42</span>
+            <span class="stat-label">Bueiros monitorados</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">8</span>
+            <span class="stat-label">Alertas este mês</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-number">97%</span>
+            <span class="stat-label">Uptime dos sensores</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="city-card">
+          <div class="city-card-header">
+            <span class="city-dot green"></span>
+            <span class="city-dot yellow"></span>
+            <span class="city-dot red"></span>
+            <span class="city-card-title">Status em tempo real</span>
+          </div>
+          <div class="city-card-body">
+            <div class="monitor-row ok">
+              <span class="monitor-icon">✅</span>
+              <div class="monitor-info">
+                <span class="monitor-name">Bueiro Av. Lauro Sodré, 142</span>
+                <span class="monitor-status">Normal — 12% de capacidade</span>
+              </div>
+            </div>
+            <div class="monitor-row warning">
+              <span class="monitor-icon">⚠️</span>
+              <div class="monitor-info">
+                <span class="monitor-name">Bueiro R. José Camacho, 89</span>
+                <span class="monitor-status">Atenção — 68% de capacidade</span>
+              </div>
+            </div>
+            <div class="monitor-row danger">
+              <span class="monitor-icon">🚨</span>
+              <div class="monitor-info">
+                <span class="monitor-name">Bueiro Av. Carlos Gomes, 311</span>
+                <span class="monitor-status">Crítico — 94% — Chamado aberto</span>
+              </div>
+            </div>
+            <div class="monitor-row ok">
+              <span class="monitor-icon">✅</span>
+              <div class="monitor-info">
+                <span class="monitor-name">Bueiro Rua Rui Barbosa, 55</span>
+                <span class="monitor-status">Normal — 25% de capacidade</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- COMO FUNCIONA -->
+    <section class="section" id="como-funciona">
+      <div class="container">
+        <div class="section-label">Como funciona</div>
+        <h2 class="section-title">Uma solução simples<br/>para um problema sério</h2>
+        <p class="section-desc">
+          Nossa plataforma conecta sensores inteligentes instalados nos bueiros de Porto Velho
+          a um painel web acessível para todos os cidadãos.
+        </p>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-icon">📡</div>
+            <div class="step-num">01</div>
+            <h3>Sensor detecta</h3>
+            <p>Um sensor ultrassônico instalado na tampa do bueiro mede continuamente o nível de acúmulo de lixo e água.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon">📶</div>
+            <div class="step-num">02</div>
+            <h3>Dados transmitidos</h3>
+            <p>As leituras são enviadas via LoRa/NB‑IoT para a nuvem em intervalos regulares, sem intervenção humana.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon">🗺️</div>
+            <div class="step-num">03</div>
+            <h3>Visualização no mapa</h3>
+            <p>Os dados aparecem em tempo real no nosso mapa interativo, com cores indicando o estado de cada bueiro.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-icon">🔔</div>
+            <div class="step-num">04</div>
+            <h3>Alerta automático</h3>
+            <p>Quando um bueiro atinge nível crítico, um chamado é aberto automaticamente para a Prefeitura de Porto Velho.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONSCIENTIZAÇÃO -->
+    <section class="section section-alt" id="consciencia">
+      <div class="container">
+        <div class="section-label">Conscientização</div>
+        <h2 class="section-title">O lixo nas ruas é nosso<br/>inimigo em comum</h2>
+        <div class="awareness-grid">
+          <div class="awareness-visual">
+            <div class="awareness-illustration">
+              <div class="drain-top">
+                <div class="drain-grate"></div>
+              </div>
+              <div class="trash-items">
+                <span class="trash-item t1">🧴</span>
+                <span class="trash-item t2">🗞️</span>
+                <span class="trash-item t3">🥤</span>
+                <span class="trash-item t4">🛍️</span>
+              </div>
+              <div class="awareness-arrow">↓</div>
+              <div class="drain-blocked">
+                <span>⚠️ Bueiro entupido</span>
+              </div>
+              <div class="awareness-arrow">↓</div>
+              <div class="flood-box">🌊 Rua alagada</div>
+            </div>
+          </div>
+          <div class="awareness-content">
+            <div class="awareness-card">
+              <span class="aw-icon">🗑️</span>
+              <div>
+                <h4>Use as lixeiras</h4>
+                <p>Jogue seu lixo sempre em lixeiras. Resíduos nas ruas são arrastados pela chuva diretamente para os bueiros.</p>
+              </div>
+            </div>
+            <div class="awareness-card">
+              <span class="aw-icon">♻️</span>
+              <div>
+                <h4>Recicle corretamente</h4>
+                <p>Separe plásticos, papéis e metais para a coleta seletiva. Itens recicláveis entupem bueiros quando descartados incorretamente.</p>
+              </div>
+            </div>
+            <div class="awareness-card">
+              <span class="aw-icon">🤝</span>
+              <div>
+                <h4>Fiscalize e denuncie</h4>
+                <p>Se perceber descarte irregular ou bueiro em mau estado, use nossa plataforma ou acione a Prefeitura de Porto Velho.</p>
+              </div>
+            </div>
+            <div class="awareness-card">
+              <span class="aw-icon">🏘️</span>
+              <div>
+                <h4>Cuide do seu bairro</h4>
+                <p>Um bueiro entupido pode alagar ruas inteiras. A limpeza começa na atitude de cada cidadão.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-section">
+      <div class="container">
+        <div class="cta-box">
+          <h2>Acesse o mapa e veja os bueiros<br/>da sua rua agora mesmo</h2>
+          <p>Informação em tempo real para uma cidade mais segura e preparada.</p>
+          <button class="btn btn-primary btn-lg" onclick="showPage('mapa')">Abrir Mapa Interativo →</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== PAGE: MAPA ===== -->
+  <main id="page-mapa" class="page">
+    <section class="map-page">
+      <div class="map-header">
+        <div class="container">
+          <div class="section-label">Porto Velho – RO</div>
+          <h2 class="section-title">Mapa de Bueiros Monitorados</h2>
+          <p class="section-desc">Clique em qualquer marcador para ver o status detalhado do bueiro.</p>
+          <div class="map-legend">
+            <div class="legend-item"><span class="legend-dot green"></span>Normal (0–49%)</div>
+            <div class="legend-item"><span class="legend-dot yellow"></span>Atenção (50–79%)</div>
+            <div class="legend-item"><span class="legend-dot red"></span>Crítico (80–100%)</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="map-layout">
+        <div id="map"></div>
+        <div class="map-sidebar" id="mapSidebar">
+          <div class="sidebar-placeholder" id="sidebarPlaceholder">
+            <div class="sidebar-icon">📍</div>
+            <p>Clique em um bueiro no mapa para ver os detalhes.</p>
+          </div>
+          <div class="sidebar-detail" id="sidebarDetail" style="display:none">
+            <div class="detail-header">
+              <div class="detail-status-badge" id="detailBadge"></div>
+              <h3 id="detailName"></h3>
+              <p id="detailAddress"></p>
+            </div>
+            <div class="detail-gauge-wrap">
+              <div class="detail-gauge">
+                <div class="gauge-bar" id="gaugeBar"></div>
+              </div>
+              <span class="gauge-label" id="gaugeLabel"></span>
+            </div>
+            <div class="detail-info-grid">
+              <div class="info-block">
+                <span class="info-label">Última leitura</span>
+                <span class="info-value" id="detailLastRead"></span>
+              </div>
+              <div class="info-block">
+                <span class="info-label">Nível de acúmulo</span>
+                <span class="info-value" id="detailLevel"></span>
+              </div>
+              <div class="info-block">
+                <span class="info-label">Chamado prefeitura</span>
+                <span class="info-value" id="detailTicket"></span>
+              </div>
+              <div class="info-block">
+                <span class="info-label">Sensor instalado</span>
+                <span class="info-value" id="detailSensor"></span>
+              </div>
+            </div>
+            <div class="detail-history" id="detailHistory"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Summary cards -->
+      <div class="container">
+        <div class="map-summary">
+          <div class="summary-card green-card">
+            <span class="summary-num" id="countNormal">—</span>
+            <span class="summary-label">Bueiros normais</span>
+          </div>
+          <div class="summary-card yellow-card">
+            <span class="summary-num" id="countWarning">—</span>
+            <span class="summary-label">Em atenção</span>
+          </div>
+          <div class="summary-card red-card">
+            <span class="summary-num" id="countCritical">—</span>
+            <span class="summary-label">Críticos</span>
+          </div>
+          <div class="summary-card gray-card">
+            <span class="summary-num" id="countTotal">—</span>
+            <span class="summary-label">Total monitorado</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== PAGE: SOBRE ===== -->
+  <main id="page-sobre" class="page">
+
+    <!-- SOBRE O PROJETO -->
+    <section class="section sobre-hero">
+      <div class="container">
+        <div class="section-label">Quem somos</div>
+        <h2 class="section-title">Estudantes que enxergaram<br/>um problema e agiram</h2>
+        <p class="section-desc sobre-desc">
+          Somos alunos do curso de <strong>Análise e Desenvolvimento de Sistemas</strong> do
+          <strong>IFRO – Câmpus Calama</strong>, integrantes da startup <strong>Tecno Madeira</strong>.
+          Observamos de perto o problema recorrente dos alagamentos em Porto Velho causados por bueiros
+          entupidos e desenvolvemos a plataforma <em>De Olho no Bueiro</em> como solução tecnológica
+          acessível e eficiente.
+        </p>
+      </div>
+    </section>
+
+    <!-- EQUIPE -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-label">Nossa equipe</div>
+        <h2 class="section-title">As mentes por trás do projeto</h2>
+        <div class="team-grid">
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: #c8e6c9;">T</div>
+            <h4>Theo</h4>
+            <span class="team-role">Desenvolvimento Back-end</span>
+            <p>Responsável pela integração dos sensores com a API e processamento dos dados em nuvem.</p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: #dcedc8;">M</div>
+            <h4>Marcos</h4>
+            <span class="team-role">Hardware & IoT</span>
+            <p>Liderou a montagem e configuração dos sensores ultrassônicos instalados nos bueiros.</p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: #e8f5e9;">I</div>
+            <h4>Izabela</h4>
+            <span class="team-role">UI/UX & Design</span>
+            <p>Projetou a identidade visual da plataforma e garantiu uma experiência intuitiva ao usuário.</p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: #f1f8e9;">V</div>
+            <h4>Vanessa</h4>
+            <span class="team-role">Dados & Análise</span>
+            <p>Cuida do processamento estatístico das leituras e dos relatórios enviados à Prefeitura.</p>
+          </div>
+
+          <div class="team-card">
+            <div class="team-avatar" style="background: #b2dfdb;">R</div>
+            <h4>Rayssa</h4>
+            <span class="team-role">Gestão & Comunicação</span>
+            <p>Coordena o projeto, articula parcerias e garante que a solução chegue a quem precisa.</p>
+          </div>
+
+        </div>
+
+        <div class="startup-badge">
+          <span>🌳</span>
+          <span>Tecno Madeira – IFRO Câmpus Calama</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TECNOLOGIA DO SENSOR -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Nossa tecnologia</div>
+        <h2 class="section-title">Como coletamos as informações</h2>
+        <p class="section-desc">
+          O coração do sistema é o <strong>SIG-C</strong> (Sistema Integrado de Gestão de Culverts),
+          um dispositivo desenvolvido pela equipe que é instalado discretamente na tampa dos bueiros.
+        </p>
+        <div class="tech-grid">
+          <div class="tech-visual">
+            <div class="sensor-diagram-img-wrap">
+              <img src="sensor-diagram.png" alt="Diagrama do sistema SIG-C instalado no bueiro" class="sensor-diagram-img"/>
+              <p class="sensor-diagram-caption">Fonte: Autores, 2026 — Sistema SIG-C instalado na tampa do bueiro</p>
+            </div>
+            <div class="sensor-box">
+              <div class="sensor-box-title">📦 SIG-C – Dispositivo de Campo</div>
+              <div class="sensor-components">
+                <div class="sensor-comp">
+                  <span class="comp-icon">🔋</span>
+                  <div>
+                    <strong>Bateria LiFePO4</strong>
+                    <p>Armazena energia para manter o circuito funcionando à noite ou em dias nublados.</p>
+                  </div>
+                </div>
+                <div class="sensor-comp">
+                  <span class="comp-icon">⚡</span>
+                  <div>
+                    <strong>Gerenciador de Carga</strong>
+                    <p>Regula a tensão entre o painel solar, a bateria e os circuitos, evitando sobrecargas.</p>
+                  </div>
+                </div>
+                <div class="sensor-comp">
+                  <span class="comp-icon">🧠</span>
+                  <div>
+                    <strong>MCU Principal (ESP32)</strong>
+                    <p>Processa as leituras, filtra ruídos do sinal e decide quando emitir alertas de nível crítico.</p>
+                  </div>
+                </div>
+                <div class="sensor-comp">
+                  <span class="comp-icon">📡</span>
+                  <div>
+                    <strong>Módulo LoRa/NB-IoT + Antena</strong>
+                    <p>Envia os dados processados via rádio ou rede celular para o sistema em nuvem.</p>
+                  </div>
+                </div>
+                <div class="sensor-comp">
+                  <span class="comp-icon">🔊</span>
+                  <div>
+                    <strong>Sensor Ultrassônico</strong>
+                    <p>Emite pulsos sonoros para baixo para medir a altura do acúmulo de lixo dentro do bueiro.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="tech-diagram">
+            <div class="diagram-flow">
+              <div class="flow-step">
+                <div class="flow-icon">☀️</div>
+                <div class="flow-text">Painel Solar capta energia</div>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <div class="flow-icon">🔊</div>
+                <div class="flow-text">Sensor ultrassônico mede o nível</div>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <div class="flow-icon">🧠</div>
+                <div class="flow-text">ESP32 processa os dados</div>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <div class="flow-icon">📡</div>
+                <div class="flow-text">LoRa/NB-IoT transmite para a nuvem</div>
+              </div>
+              <div class="flow-arrow">↓</div>
+              <div class="flow-step">
+                <div class="flow-icon">🗺️</div>
+                <div class="flow-text">Aparece no mapa em tempo real</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTATO -->
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-label">Fale conosco</div>
+        <h2 class="section-title">Entre em contato</h2>
+        <p class="section-desc">Dúvidas, sugestões ou parcerias? Estamos à disposição.</p>
+        <div class="contact-grid">
+          <a href="mailto:deolhonobueiro@gmail.com" class="contact-card" id="contact-email">
+            <div class="contact-icon">✉️</div>
+            <div>
+              <strong>E-mail</strong>
+              <span>deolhonobueiro@gmail.com</span>
+            </div>
+          </a>
+          <a href="https://wa.me/5569993436991" target="_blank" class="contact-card" id="contact-whatsapp">
+            <div class="contact-icon">💬</div>
+            <div>
+              <strong>WhatsApp</strong>
+              <span>+55 69 99343-6991</span>
+            </div>
+          </a>
+          <div class="contact-card" id="contact-location">
+            <div class="contact-icon">📍</div>
+            <div>
+              <strong>Localização</strong>
+              <span>IFRO Câmpus Calama – Porto Velho, RO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <img src="logo.png" alt="De Olho no Bueiro" class="footer-logo"/>
+        <p>Monitoramento inteligente de bueiros para uma Porto Velho mais segura e preparada.</p>
+      </div>
+      <div class="footer-links">
+        <strong>Navegação</strong>
+        <a href="#" onclick="showPage('home')">Início</a>
+        <a href="#" onclick="showPage('mapa')">Mapa de Bueiros</a>
+        <a href="#" onclick="showPage('sobre')">Sobre Nós</a>
+      </div>
+      <div class="footer-contact">
+        <strong>Contato</strong>
+        <span>deolhonobueiro@gmail.com</span>
+        <span>+55 69 99343-6991</span>
+        <span>IFRO Câmpus Calama – Porto Velho/RO</span>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 De Olho no Bueiro · Tecno Madeira · IFRO Câmpus Calama</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
